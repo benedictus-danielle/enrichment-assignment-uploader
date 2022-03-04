@@ -90,9 +90,10 @@ def main():
         if filename != "" and os.path.exists(filename):
             break
 
-    file = open(filename, 'rb')
+    
     assignment = assignments[list(assignments)[choose]]
     for x in assignment:
+        file = open(filename, 'rb')
         data = {
             "AssignmentID": x['id'],
             "FacultySpvId": x['facultySpv'],
@@ -101,7 +102,9 @@ def main():
         r = session.post(f"{ACTIVITY_BASE_URL}/Assignment/UploadAssignment", data=data, files={"file": file})
         data["Path"] = r.json()["path"]
         submit = session.post(f"{ACTIVITY_BASE_URL}/Assignment/SubmitAssignment", data=data)
+        file.close()
 
+    file = open(filename, 'rb')
     month = datetime.strptime(list(assignments)[choose], "%B")
     r = session.post(f"{ACTIVITY_BASE_URL}/MonthlyReport/SaveMonthly", data={
         "Month": month,
